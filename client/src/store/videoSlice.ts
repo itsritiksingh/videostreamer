@@ -6,12 +6,12 @@ import { RootState } from '.';
 import { loadState } from './localStorage';
 
 export interface videoState {
-  videos: [{ id: string, name:string,duration:Number,path:string,thumbnail:string}],
+  videos: [{ _id: string, name: string, duration: Number, path: string, thumbnail: string }],
   allvideosmsg: string,
   addvideomsg: string,
   fetchvideoMsg: string,
   selectedvideoId: string,
-  editvideoMsg:string
+  editvideoMsg: string
 }
 
 
@@ -28,6 +28,16 @@ export const allvideos = createAsyncThunk(
       .get(`${url}/video`)
     return request.data;
   });
+
+export const fetchVideoById = createAsyncThunk(
+  'fetchVideo',
+  async (arg, { getState }) => {
+    const state: RootState = getState() as RootState;
+    const request = await axios
+      .get(`${url}/video/id/${state.videoReducer.selectedvideoId}`)
+    return request.data;
+  });
+
 
 const videoSlice = createSlice({
   name: 'video',
@@ -46,6 +56,15 @@ const videoSlice = createSlice({
     })
     builder.addCase(allvideos.rejected, (state, action) => {
       state.allvideosmsg = "Error Fetching";
+      return state;
+    })
+    builder.addCase(fetchVideoById.fulfilled, (state, action) => {
+      state.videos = [action.payload]
+      state.fetchvideoMsg = "Success";
+      return state;
+    })
+    builder.addCase(fetchVideoById.rejected, (state, action) => {
+      state.fetchvideoMsg = "Error Fetching";
       return state;
     })
   },

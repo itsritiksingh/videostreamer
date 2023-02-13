@@ -51,7 +51,7 @@ const UploadPage: React.FC = () => {
         // onRemove: questionRemove,
     };
 
-    return (<>
+    return (<div>
     {contextHolder}
     <div className="form-wrapper">
         <Form
@@ -89,6 +89,6 @@ const UploadPage: React.FC = () => {
             </Form.Item>
         </Form>
         </div>
-    </>)
+    </div>)
 }
 export default UploadPage;

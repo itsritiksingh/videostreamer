@@ -31,9 +31,9 @@ var allowCrossDomain = function (req, res, next) {
 };
 
 app.use(allowCrossDomain);
-app.use('/video', videoStream);
 app.use(express.static('public'));
 app.use(express.static('uploads'));
+app.use('/video', videoStream);
 // app.post("/upload", (req, res) => {
 
 //   let fileuuid = rand(8).toString("hex");

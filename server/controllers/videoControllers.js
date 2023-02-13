@@ -11,6 +11,11 @@ module.exports.allVideos = async (req, res) => {
     videoModel.find({}).then(videos => res.send(videos)).catch(e => console.log(e));
 }
 
+module.exports.getVideoById = async (req, res) => {
+    const videoId = req.params.videoId;
+    videoModel.findById(videoId).then(videos => res.send(videos)).catch(e => console.log(e));
+}
+
 module.exports.uploadVideo = async (req, res) => {
     let fileuuid = rand(8).toString("hex");
     const fields = {};
@@ -63,15 +68,9 @@ module.exports.uploadVideo = async (req, res) => {
 }
 
 module.exports.streamVideo = async (req, res) => {
-    const videoId = req.params.videoId;
-    let video;
-    try {
-        video = await videoModel.findById(videoId);
-    } catch (e) {
-        return res.status(403).json({error: {messgae: 'Video Not Found'}});
-    }
-
-    const video_file = fs.readFileSync(path.join(process.cwd(), video.path));
+    const videoPath = decodeURIComponent(req.params.videoPath);
+    console.log(videoPath)
+    const video_file = fs.readFileSync(path.join(process.cwd(), videoPath));
     const total = video_file.length;
     var range = req.headers.range;
     if (range) {
@@ -89,6 +88,6 @@ module.exports.streamVideo = async (req, res) => {
   
     } else {
       res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'video/mp4' });
-      fs.createReadStream(path).pipe(res);
+      fs.createReadStream(path.join(process.cwd(), videoPath)).pipe(res);
     }
   }

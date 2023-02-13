@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 const video = require("../controllers/videoControllers")
 
-router.get('/',video.allVideos);
+router.get('/:videoPath',video.streamVideo);
+router.get('/id/:videoId',video.getVideoById);
 router.post('/upload', video.uploadVideo);
-router.post('/:videoId',video.streamVideo);
+router.get('/',video.allVideos);
 
 module.exports = router;
