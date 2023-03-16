@@ -49,7 +49,7 @@ module.exports.uploadVideo = async (req, res) => {
                 fileuuid,
                 _filename,
                 _id: video._id,
-            })
+            }).attempts(10)
             .removeOnComplete(true)
             .save((err) => {
                 if (err) {
@@ -69,7 +69,6 @@ module.exports.uploadVideo = async (req, res) => {
 
 module.exports.streamVideo = async (req, res) => {
     const videoPath = decodeURIComponent(req.params.videoPath);
-    console.log(videoPath)
     const video_file = fs.readFileSync(path.join(process.cwd(), videoPath));
     const total = video_file.length;
     var range = req.headers.range;
