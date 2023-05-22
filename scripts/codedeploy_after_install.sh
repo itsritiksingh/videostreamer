@@ -1,2 +1,3 @@
 #!/bin/bash
-sudo cd server && npm install --production
+cd /home/ubuntu/my-app1/server
+npm install --production
