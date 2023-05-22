@@ -1,39 +1,18 @@
-version: 0.1
-os: linux
+version: 0.0
+os: linux 
 files:
   - source: /
-    destination: /var/www/html  # Specify the destination directory on the EC2 instance
-
+    destination: /home/ubuntu/my-app1
 hooks:
   BeforeInstall:
-    - location: /bin/bash  # Path to a script to clean up previous deployment artifacts
-      runas: root
-      commands:
-        - sudo apt-get install nodejs-legacy -y
-        - sudo apt-get install npm  -y
-        - sudo npm install pm2 -g
-        - sudo rm -rf /var/www/html
-
+    - location: scripts/codedeploy_before_install.sh
+      timeout: 300
+      runas: ubuntu
   AfterInstall:
-    - location: /bin/bash
-      runas: root
-      timeout: 180
-      timeoutSignal: SIGTERM
-      commands:
-        - npm install --production
-
+    - location: scripts/codedeploy_after_install.sh
+      timeout: 300
+      runas: ubuntu
   ApplicationStart:
-    - location: /bin/bash
-      runas: ubuntu  # User to run the script as
-      timeout: 180
-      timeoutSignal: SIGTERM
-      commands:
-        - npm start
-
-  ValidateService:
-    - location: /bin/bash
-      runas: ubuntu  # User to run the script as
-      timeout: 180
-      timeoutSignal: SIGTERM
-      commands:
-        - # Add additional validation or test commands here
+    - location: scripts/codedeploy_application_start.sh
+      timeout: 300
+      runas: ubuntu
