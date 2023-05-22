@@ -6,7 +6,7 @@ files:
 
 hooks:
   BeforeInstall:
-    - location: scripts/clean.sh  # Path to a script to clean up previous deployment artifacts
+    - location: /bin/bash  # Path to a script to clean up previous deployment artifacts
       runas: root
       commands:
         - sudo apt-get install nodejs-legacy -y
