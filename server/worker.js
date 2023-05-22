@@ -20,7 +20,7 @@ mongoose
   .catch((e) => console.log(e));
 
 var queue = kue.createQueue({
-  redis: "redis://default:hNgVP5GULu6kFY0kjHQPavqcdprZyKxO@redis-19881.c253.us-central1-1.gce.cloud.redislabs.com:19881"
+  redis: process.env.REDIS
 });
 
 // queue.process("convert", (job, done) => {

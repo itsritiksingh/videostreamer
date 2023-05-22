@@ -3,9 +3,12 @@ const rand = require("crypto").randomBytes;
 const path = require("path");
 const fs = require("fs");
 const { getVideoDurationInSeconds } = require('get-video-duration')
-const genThumbnail = require('simple-thumbnail')
+const genThumbnail = require('simple-thumbnail');
+var ffmpeg = require('fluent-ffmpeg');
 const Busboy = require("busboy");
 const {queue} = require("../config/kue");
+const { Upload } = require("@aws-sdk/lib-storage");
+const { S3Client, S3 } = require("@aws-sdk/client-s3");
 
 module.exports.allVideos = async (req, res) => {
     videoModel.find({}).then(videos => res.send(videos)).catch(e => console.log(e));
@@ -23,10 +26,29 @@ module.exports.uploadVideo = async (req, res) => {
     let _filename, saveTo, _encoding;
     var busboy = Busboy({ headers: req.headers });
 
-    busboy.on("file", function (fieldname, file, {filename,encoding}) {
-        console.log(process.env.FILE_UPLOAD_PATH, fileuuid, filename);
+    busboy.on("file",async function (fieldname, file, {filename,encoding}) {
+        // console.log(process.env.FILE_UPLOAD_PATH, fileuuid, filename);
         saveTo = path.join(process.env.FILE_UPLOAD_PATH, fileuuid, filename);
-        file.pipe(fs.createWriteStream(saveTo));
+        // file.pipe(fs.createWriteStream(saveTo));
+
+         try {
+           const parallelUploads3 = new Upload({
+             client: new S3({}) || new S3Client({}),
+             queueSize: 10, // optional concurrency configuration
+             partSize: 1024 * 1024 * 5, // optional size of each part
+             leavePartsOnError: false, // optional manually handle dropped parts
+             params: {Bucket: 'initials3randomtextinput', Key: filename, Body: file},
+           });
+         
+           parallelUploads3.on("httpUploadProgress", (progress) => {
+             console.log(progress);
+           });
+         
+           await parallelUploads3.done();
+         } catch (e) {
+           console.log(e);
+         }
+
         _filename = filename;
         _encoding = encoding;
     });
@@ -34,12 +56,12 @@ module.exports.uploadVideo = async (req, res) => {
         fields[fieldname] = val;
     });
     busboy.on("finish", async function () {
-        const duration = await getVideoDurationInSeconds(saveTo);
-        await genThumbnail(saveTo, path.join(process.env.FILE_UPLOAD_PATH, fileuuid, 'thumbnail.png'), '250x?')
+        // const duration = await getVideoDurationInSeconds(saveTo);
+        // await genThumbnail(saveTo, path.join(process.env.FILE_UPLOAD_PATH, fileuuid, 'thumbnail.png'), '250x?')
         const video = await videoModel({
             ...fields,
-            duration,
-            thumbnail:path.join(fileuuid, 'thumbnail.png'),
+            // duration,
+            // thumbnail:path.join(fileuuid, 'thumbnail.png'),
             path: saveTo,
         }).save()
         

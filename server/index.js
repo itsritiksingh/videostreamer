@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const app = express();
+const app = express(); 
 const {globalErrorHandler} = require("./utils/errorHandler");
 const mongoose = require("mongoose");
 var videoStream = require('./routes/videoRouter');
@@ -27,12 +27,17 @@ var allowCrossDomain = function (req, res, next) {
   next();
 };
 
-app.use(allowCrossDomain);
+if(process.env.NODE_ENV == "production") app.use(allowCrossDomain); 
+
 app.use(express.static('public'));
 app.use(express.static('uploads'));
 app.use('/video', videoStream);
 
 app.use("/queue/", (req,res,next)=>{res.set("Cache-Control","no-cache","no-store");next()},kue.app);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+ });
 
 app.use(globalErrorHandler);
 

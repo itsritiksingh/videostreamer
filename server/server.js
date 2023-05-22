@@ -1,4 +1,4 @@
-const app = require("./index");
+const {app} = require("./index");
 const http = require("http");
 const server = http.createServer(app);
 const mongoose = require("mongoose");
@@ -38,4 +38,4 @@ process.on("SIGTERM", exitHandler(0, "SIGTERM"));
 process.on("SIGINT", exitHandler(0, "SIGINT"));
 process.on("SIGQUIT", exitHandler(0, "SIGQUIT"));
 
-server.listen(process.env.PORT || 5000);
+server.listen(process.env.PORT || 5000,()=> console.log("server.address.port"));

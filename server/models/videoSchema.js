@@ -8,7 +8,7 @@ const video = schema({
     duration:{
         //duration in milliseconds
         type:Number,
-        required: true
+        // required: true
     },
     path:{
         type:String,
@@ -16,7 +16,7 @@ const video = schema({
     },
     thumbnail:{
         type:String,
-        required: true
+        // required: true
     },
 
 })

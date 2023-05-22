@@ -1,0 +1,38 @@
+version: 0.1
+os: linux
+files:
+  - source: /
+    destination: /var/www/html  # Specify the destination directory on the EC2 instance
+
+hooks:
+  BeforeInstall:
+    - location: scripts/clean.sh  # Path to a script to clean up previous deployment artifacts
+      runas: root
+      commands:
+        - pm2 stop app.js
+        - pm2 delete app.js
+        - rm -rf /var/www/html
+
+  AfterInstall:
+    - location: /bin/bash
+      runas: root
+      timeout: 180
+      timeoutSignal: SIGTERM
+      commands:
+        - npm install --production
+
+  ApplicationStart:
+    - location: /bin/bash
+      runas: ubuntu  # User to run the script as
+      timeout: 180
+      timeoutSignal: SIGTERM
+      commands:
+        - npm start
+
+  ValidateService:
+    - location: /bin/bash
+      runas: ubuntu  # User to run the script as
+      timeout: 180
+      timeoutSignal: SIGTERM
+      commands:
+        - # Add additional validation or test commands here

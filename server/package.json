@@ -1,12 +1,14 @@
 {
   "scripts": {
-    "start": "node index && node worker",
-    "dev": "nodemon index &&  nodemon worker",
+    "start": "pm2 start server.js -i max",
+    "dev": "nodemon server.js &&  nodemon worker.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@aws-sdk/lib-storage": "^3.335.0",
     "@godaddy/terminus": "^4.11.2",
+    "aws-sdk": "^2.1378.0",
     "busboy": "^1.6.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
