@@ -10,9 +10,12 @@ hooks:
       runas: ubuntu
   AfterInstall:
     - location: scripts/codedeploy_after_install.sh
-      timeout: 300
+      timeout: 1000
       runas: ubuntu
-  ApplicationStart:
-    - location: scripts/codedeploy_application_start.sh
-      timeout: 300
-      runas: ubuntu
+permissions:
+  - object: /home/ubuntu
+    owner: ubuntu
+    group: ubuntu
+    type:
+      - directory
+      - file
