@@ -91,7 +91,7 @@ module.exports.uploadVideo = async (req, res) => {
 
 module.exports.streamVideo = async (req, res) => {
     const videoPath = decodeURIComponent(req.params.videoPath);
-    const video_file = fs.readFileSync(path.join(process.cwd(), videoPath));
+    const video_file = fs.readFileSync(path.join('mnt','efs', videoPath));
     const total = video_file.length;
     var range = req.headers.range;
     if (range) {
@@ -112,3 +112,5 @@ module.exports.streamVideo = async (req, res) => {
       fs.createReadStream(path.join(process.cwd(), videoPath)).pipe(res);
     }
   }
+
+// console.log(process.cwd());

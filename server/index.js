@@ -4,7 +4,6 @@ const app = express();
 const {globalErrorHandler} = require("./utils/errorHandler");
 const mongoose = require("mongoose");
 var videoStream = require('./routes/videoRouter');
-const { createTerminus } = require('@godaddy/terminus')
 
 mongoose
   .connect(
@@ -27,7 +26,7 @@ var allowCrossDomain = function (req, res, next) {
   next();
 };
 
-if(process.env.NODE_ENV == "production") app.use(allowCrossDomain); 
+if(process.env.NODE_ENV != "production") app.use(allowCrossDomain); 
 
 app.use(express.static('public'));
 app.use(express.static('uploads'));
