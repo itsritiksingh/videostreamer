@@ -91,24 +91,37 @@ module.exports.uploadVideo = async (req, res) => {
 
 module.exports.streamVideo = async (req, res) => {
     const videoPath = decodeURIComponent(req.params.videoPath);
-    const video_file = fs.readFileSync(path.join('mnt','efs', videoPath));
-    const total = video_file.length;
+    const video_file = path.join('/','mnt','efs', videoPath);
+    let videoSize;
+    try{
+      videoSize = fs.statSync(video_file).size;
+    } catch (e){
+      console.log(e);
+      return res.json(e);
+    }
     var range = req.headers.range;
     if (range) {
       var positions = range.replace(/bytes=/, "").split("-");
       var start = parseInt(positions[0], 10);
-      var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
+      var end = positions[1] ? parseInt(positions[1], 10) : videoSize - 1;
       var chunksize = (end - start) + 1;
       res.writeHead(206, {
-        "Content-Range": "bytes " + start + "-" + end + "/" + total,
+        "Content-Range": "bytes " + start + "-" + end + "/" + videoSize,
         "Accept-Ranges": "bytes",
         "Content-Length": chunksize,
         "Content-Type": "video/mp4"
       });
-      res.end(video_file.subarray(start, end + 1), "binary");
+      try {
+        
+        const videoStream = fs.createReadStream(video_file, { start, end });
+        videoStream.pipe(res);
+      } catch (error) {
+        console.log(error);
+        return res.json(error)
+      }
   
     } else {
-      res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'video/mp4' });
+      res.writeHead(200, { 'Content-Length': videoSize, 'Content-Type': 'video/mp4' });
       fs.createReadStream(path.join(process.cwd(), videoPath)).pipe(res);
     }
   }
