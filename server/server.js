@@ -38,4 +38,4 @@ process.on("SIGTERM", exitHandler(0, "SIGTERM"));
 process.on("SIGINT", exitHandler(0, "SIGINT"));
 process.on("SIGQUIT", exitHandler(0, "SIGQUIT"));
 
-server.listen(process.env.PORT || 5000,()=> console.log("server.address.port"));
+server.listen(process.env.PORT || 5000,()=> console.log("Server Started"));

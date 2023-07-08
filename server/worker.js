@@ -13,7 +13,7 @@ const path = require("path");
 
 mongoose
   .connect(
-    "mongodb+srv://root:root@cluster0-zcmfs.mongodb.net/examiner?retryWrites=true&w=majority",
+    process.env.MONGO_URI,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("mongoose connected"))

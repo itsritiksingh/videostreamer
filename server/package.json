@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "pm2 start server.js -i max",
+    "start": "nodemon server.js",
     "dev": "nodemon server.js &&  nodemon worker.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
